@@ -23,10 +23,9 @@ overflow: hidden;
 flex:1;
 width:100%;
 position:relative;
-background:#000; /* Ensures content covers what is behind it */
-z-index: 10; /* Higher than the dock */
-/* Margin matches the visible part of the dock (100px total - 15px hidden) */
-margin-bottom: 85px; 
+background:#000; /* Solid black background to hide the radio site behind it */
+z-index: 10; /* Keeps the alerts on the top layer */
+margin-bottom: 85px; /* Amount of the radio dock that remains visible at the bottom */
 }
 
 /* Class to hide the bottom gap when shower is active */
@@ -35,15 +34,15 @@ margin-bottom: 85px;
 }
 
 #radio-dock{
-height:100px; /* Increased height as requested */
+height:100vh; /* Stretches the radio container to full screen height */
 width:100%; 
 background:#0a111f;
-z-index: 1; /* Lower than the alert section */
+z-index: 1; /* Places it behind the alert section */
 position:fixed;
-bottom: -15px; /* Hides 15px behind the alert section */
+bottom: 0;
 left: 0;
 display:flex;
-align-items:center;
+align-items:flex-end; /* Aligns the station's content to the bottom */
 padding:0; 
 margin:0;
 border-top: 1px solid rgba(255,255,255,0.05);
@@ -166,7 +165,8 @@ cursor:pointer;
 
 #kan-container {
     width: 100%;
-    height: 100%;
+    /* This defines the visible height of the station inside the background dock */
+    height: 100vh; 
 }
 
 </style>
