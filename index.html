@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iron Monitor - Guardian System</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+
+body{
+background:#000;
+margin:0;
+height:100vh;
+display:flex;
+flex-direction:column;
+font-family:system-ui,-apple-system,sans-serif;
+overflow: hidden;
+}
+
+#alert-section{
+flex:1;
+width:100%;
+position:relative;
+background:#000;
+/* Default margin for radio dock */
+margin-bottom: 75px;
+}
+
+/* Class to hide the bottom gap when shower is active */
+.no-dock #alert-section {
+    margin-bottom: 0;
+}
+
+#radio-dock{
+height:75px; 
+width:100%; 
+background:#0a111f;
+z-index:100;
+position:fixed;
+bottom: 0;
+left: 0;
+display:flex;
+align-items:center;
+padding:0; 
+margin:0;
+border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.no-dock #radio-dock {
+    display: none;
+}
+
+iframe{
+width:100%;
+height:100%;
+border:none;
+}
+
+#setup-ui{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+z-index:1000;
+background:#0a0a0a;
+padding:40px;
+border:2px solid #b91c1c;
+width:500px;
+text-align:center;
+box-shadow:0 0 60px rgba(185,28,28,0.4);
+border-radius:16px;
+}
+
+.active-mode #setup-ui{
+display:none!important;
+}
+
+#top-controls{
+display:none;
+position:fixed;
+top:10px;
+left:10px;
+z-index:1001;
+align-items:center;
+gap:10px;
+}
+
+.active-mode #top-controls{
+display:flex;
+}
+
+#exit-btn, .mode-toggle-btn, #refresh-btn{
+background:rgba(255,255,255,0.05);
+color:#888;
+border:1px solid #333;
+font-size:10px;
+padding:4px 10px;
+cursor:pointer;
+border-radius:4px;
+font-weight:bold;
+transition:all .2s;
+}
+
+#exit-btn:hover, .mode-toggle-btn:hover, #refresh-btn:hover{
+background:rgba(255,255,255,0.1);
+color:#fff;
+}
+
+#refresh-btn {
+    border-color: #10b981;
+    color: #10b981;
+}
+
+.mode-toggle-btn {
+    display: none;
+    border-color: #3b82f6;
+    color: #3b82f6;
+}
+
+.weekday-mode .mode-toggle-btn {
+    display: block;
+}
+
+.info-pill{
+color:#ef4444;
+font-family:monospace;
+font-size:11px;
+font-weight:bold;
+background:rgba(0,0,0,.7);
+padding:4px 10px;
+border-radius:4px;
+border:1px solid rgba(185,28,28,.3);
+white-space:nowrap;
+display: flex;
+gap: 5px;
+align-items: center;
+}
+
+/* Hide specific pills in Weekday Mode */
+.weekday-mode .info-pill {
+    display: none !important;
+}
+
+#label-station{
+color:#fff;
+margin-bottom:12px; 
+}
+
+select{
+background:#1a1a1a!important;
+color:#fff!important;
+border:1px solid #333;
+padding:14px;
+border-radius:8px;
+width:100%;
+margin-bottom:30px; 
+margin-top: 5px; 
+font-size:16px;
+font-weight:600;
+appearance:none;
+cursor:pointer;
+}
+
+#kan-container {
+    width: 100%;
+    height: 100%;
+}
+
+</style>
+</head>
+
+<body dir="ltr">
+
+<div id="setup-ui">
+    <div class="mb-6 inline-block p-4 bg-red-900/20 rounded-full">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+    </div>
+
+    <h1 class="text-4xl font-black text-red-600 mb-2 uppercase italic tracking-tighter">Iron Monitor</h1>
+    
+    <div class="text-left text-xs font-bold uppercase tracking-wider mt-8" id="label-station">Select Radio Station:</div>
+
+    <select id="station-selector">
+        <!-- Channel 14 set as default (selected) -->
+        <option value="https://www.c14.co.il/radio" selected>רדיו עכשיו 14</option>
+        <option value="https://fm1.co.il/kan-moreshet">כאן מורשת (Silent)</option>
+        <option value="https://fm1.co.il/93fm">רדיו קול חי</option>
+        <option value="https://fm1.co.il/kol-barama">רדיו קול ברמה</option>
+    </select>
+
+    <div class="flex flex-col gap-3">
+        <button onclick="activateMode('shabbat')" 
+        class="w-full bg-red-700 hover:bg-red-600 py-4 rounded-xl font-black text-white uppercase tracking-widest transition-all shadow-xl shadow-red-900/40 transform hover:scale-[1.02] active:scale-95">
+            Activate Shabbat Mode
+        </button>
+
+        <button onclick="activateMode('weekday')" 
+        class="w-full bg-blue-700 hover:bg-blue-600 py-4 rounded-xl font-black text-white uppercase tracking-widest transition-all shadow-xl shadow-blue-900/40 transform hover:scale-[1.02] active:scale-95">
+            Open Weekday Dashboard
+        </button>
+
+        <button onclick="activateMode('weekday', 'shower')" 
+        class="w-full bg-cyan-700 hover:bg-cyan-600 py-4 rounded-xl font-black text-white uppercase tracking-widest transition-all shadow-xl shadow-cyan-900/40 transform hover:scale-[1.02] active:scale-95">
+            Check Shower Status
+        </button>
+    </div>
+</div>
+
+<div id="top-controls">
+    <button id="exit-btn" onclick="deactivateMode()">EXIT</button>
+    
+    <button id="refresh-btn" onclick="refreshMainFrame()">REFRESH PAGE</button>
+
+    <!-- Weekday Toggle Button (Cycles 3 modes) -->
+    <button id="view-toggle" class="mode-toggle-btn" onclick="toggleWeekdayView()">NEXT VIEW</button>
+    
+    <!-- Shabbat Only Pills -->
+    <div class="info-pill" id="shabbat-end-pill">
+        <span>HAVDALAH (JER):</span>
+        <span id="havdalah-time">...</span>
+    </div>
+
+    <div class="info-pill" id="refresh-pill">
+        <span id="timer-label">AUTO-REFRESH:</span>
+        <span id="timer-display">03:00:00</span>
+    </div>
+</div>
+
+<div id="alert-section">
+    <iframe id="alert-frame" src="about:blank"></iframe>
+</div>
+
+<div id="radio-dock">
+    <div id="kan-container">
+        <iframe id="kan-frame" src="about:blank" allow="autoplay *; encrypted-media"></iframe>
+    </div>
+</div>
+
+<script>
+
+let currentMode = null;
+let currentWeekdayView = 'tzofar'; 
+const ALERT_URL="https://www.tzevaadom.co.il/"
+const NEWS_URL="https://www.c14.co.il/news-flash"
+const SHOWER_URL="https://canishower.com/"
+const REFRESH_INTERVAL=3*60*60*1000
+let refreshTime=Date.now()+REFRESH_INTERVAL
+
+async function fetchShabbatTimes() {
+    try {
+        const response = await fetch('https://www.hebcal.com/shabbat?cfg=json&geonameid=281184&ue=off&M=on&lg=s');
+        const data = await response.json();
+        const havdalah = data.items.find(item => item.category === 'havdalah');
+        if (havdalah) {
+            const time = new Date(havdalah.date);
+            document.getElementById('havdalah-time').innerText = time.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+        }
+    } catch (e) { document.getElementById('havdalah-time').innerText = "ERR"; }
+}
+
+function updateUI(){
+    if(!currentMode || currentMode === 'weekday') return;
+
+    if(currentMode === 'shabbat'){
+        const diff = refreshTime - Date.now();
+        if(diff <= 0) { location.reload(); return; }
+        const h = Math.floor(diff/3600000).toString().padStart(2,'0');
+        const m = Math.floor((diff%3600000)/60000).toString().padStart(2,'0');
+        const s = Math.floor((diff%60000)/1000).toString().padStart(2,'0');
+        document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
+    }
+}
+
+setInterval(updateUI, 1000);
+
+function refreshMainFrame() {
+    const frame = document.getElementById('alert-frame');
+    const currentSrc = frame.src;
+    frame.src = 'about:blank';
+    setTimeout(() => {
+        frame.src = currentSrc;
+    }, 100);
+}
+
+function updateWeekdayControlsVisibility() {
+    const refreshBtn = document.getElementById('refresh-btn');
+    const toggleBtn = document.getElementById('view-toggle');
+    
+    if (currentMode === 'weekday' && currentWeekdayView === 'shower') {
+        refreshBtn.style.display = 'none';
+        toggleBtn.style.display = 'none';
+        document.body.classList.add('no-dock');
+    } else {
+        if (currentMode === 'weekday') {
+            refreshBtn.style.display = 'block';
+            toggleBtn.style.display = 'block';
+        }
+        document.body.classList.remove('no-dock');
+    }
+}
+
+function toggleWeekdayView() {
+    const frame = document.getElementById('alert-frame');
+    const btn = document.getElementById('view-toggle');
+    
+    if (currentWeekdayView === 'tzofar') {
+        frame.src = NEWS_URL;
+        currentWeekdayView = 'news';
+        btn.innerText = "SWITCH TO SHOWER STATUS";
+    } else if (currentWeekdayView === 'news') {
+        frame.src = SHOWER_URL;
+        currentWeekdayView = 'shower';
+    } else {
+        frame.src = ALERT_URL;
+        currentWeekdayView = 'tzofar';
+        btn.innerText = "SWITCH TO NEWS FLASHES";
+    }
+    updateWeekdayControlsVisibility();
+}
+
+function activateMode(mode, initialView = 'tzofar'){
+    currentMode = mode;
+    const selectedStation = document.getElementById('station-selector');
+    const selectedStationValue = selectedStation.value;
+    
+    document.body.classList.add('active-mode');
+    
+    if(mode === 'weekday') {
+        document.body.classList.add('weekday-mode');
+        currentWeekdayView = initialView;
+        
+        const frame = document.getElementById('alert-frame');
+        const btn = document.getElementById('view-toggle');
+
+        if(initialView === 'shower') {
+            frame.src = SHOWER_URL;
+        } else if (initialView === 'news') {
+            frame.src = NEWS_URL;
+            btn.innerText = "SWITCH TO SHOWER STATUS";
+        } else {
+            frame.src = ALERT_URL;
+            btn.innerText = "SWITCH TO NEWS FLASHES";
+        }
+    } else {
+        document.body.classList.remove('weekday-mode');
+        refreshTime = Date.now() + REFRESH_INTERVAL;
+        localStorage.setItem('refresh_target', refreshTime);
+        document.getElementById('alert-frame').src = ALERT_URL;
+    }
+
+    updateWeekdayControlsVisibility();
+    document.getElementById('kan-frame').src = selectedStationValue;
+    
+    localStorage.setItem('monitor_mode', mode);
+    localStorage.setItem('selected_station', selectedStationValue);
+    
+    if('wakeLock' in navigator) navigator.wakeLock.request('screen').catch(()=>{});
+}
+
+function deactivateMode(){
+    localStorage.removeItem('monitor_mode');
+    localStorage.removeItem('refresh_target');
+    location.reload();
+}
+
+window.onload=()=>{
+    fetchShabbatTimes();
+    const savedMode = localStorage.getItem('monitor_mode');
+    const savedStation = localStorage.getItem('selected_station');
+    const stationSelector = document.getElementById('station-selector');
+    
+    if(savedStation) {
+        stationSelector.value = savedStation;
+    }
+
+    if(savedMode){
+        if(savedMode === 'shabbat'){
+            const savedTarget = localStorage.getItem('refresh_target');
+            if(savedTarget) refreshTime = parseInt(savedTarget);
+        }
+        activateMode(savedMode);
+    }
+}
+
+window.oncontextmenu=(e)=>{
+    if(currentMode === 'shabbat') e.preventDefault();
+}
+
+</script>
+
+</body>
+</html>
