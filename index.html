@@ -23,9 +23,10 @@ overflow: hidden;
 flex:1;
 width:100%;
 position:relative;
-background:#000;
-/* Default margin for radio dock */
-margin-bottom: 75px;
+background:#000; /* Ensures content covers what is behind it */
+z-index: 10; /* Higher than the dock */
+/* Margin matches the visible part of the dock (100px total - 15px hidden) */
+margin-bottom: 85px; 
 }
 
 /* Class to hide the bottom gap when shower is active */
@@ -34,12 +35,12 @@ margin-bottom: 75px;
 }
 
 #radio-dock{
-height:75px; 
+height:100px; /* Increased height as requested */
 width:100%; 
 background:#0a111f;
-z-index:100;
+z-index: 1; /* Lower than the alert section */
 position:fixed;
-bottom: 0;
+bottom: -15px; /* Hides 15px behind the alert section */
 left: 0;
 display:flex;
 align-items:center;
@@ -185,7 +186,6 @@ cursor:pointer;
     <div class="text-left text-xs font-bold uppercase tracking-wider mt-8" id="label-station">Select Radio Station:</div>
 
     <select id="station-selector">
-        <!-- Channel 14 set as default (selected) -->
         <option value="https://www.c14.co.il/radio" selected>רדיו עכשיו 14</option>
         <option value="https://fm1.co.il/kan-moreshet">כאן מורשת (Silent)</option>
         <option value="https://fm1.co.il/93fm">רדיו קול חי</option>
@@ -215,10 +215,8 @@ cursor:pointer;
     
     <button id="refresh-btn" onclick="refreshMainFrame()">REFRESH PAGE</button>
 
-    <!-- Weekday Toggle Button (Cycles 3 modes) -->
     <button id="view-toggle" class="mode-toggle-btn" onclick="toggleWeekdayView()">NEXT VIEW</button>
     
-    <!-- Shabbat Only Pills -->
     <div class="info-pill" id="shabbat-end-pill">
         <span>HAVDALAH (JER):</span>
         <span id="havdalah-time">...</span>
