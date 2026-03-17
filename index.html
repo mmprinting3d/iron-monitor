@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Iron Monitor - Guardian System</title>
 
+<!-- Site Icon (Favicon) - Points to your images folder -->
+<link rel="icon" type="image/png" href="images/logo.png">
+
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
@@ -169,16 +172,24 @@ cursor:pointer;
     height: 100vh; 
 }
 
+/* Styling for the custom logo in the setup UI */
+.custom-logo {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    margin: 0 auto;
+    filter: drop-shadow(0 0 10px rgba(185, 28, 28, 0.3));
+}
+
 </style>
 </head>
 
 <body dir="ltr">
 
 <div id="setup-ui">
-    <div class="mb-6 inline-block p-4 bg-red-900/20 rounded-full">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-        </svg>
+    <div class="mb-6 flex justify-center">
+        <!-- Replaced lightning bolt with your custom logo -->
+        <img src="images/logo.png" alt="Iron Monitor Logo" class="custom-logo" onerror="this.style.display='none'">
     </div>
 
     <h1 class="text-4xl font-black text-red-600 mb-2 uppercase italic tracking-tighter">Iron Monitor</h1>
