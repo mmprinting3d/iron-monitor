@@ -28,16 +28,22 @@ width:100%;
 position:relative;
 background:#000; /* Solid black background to hide the radio site behind it */
 z-index: 10; /* Keeps the alerts on the top layer */
-margin-bottom: 85px; /* Amount of the radio dock that remains visible at the bottom */
+margin-bottom: 85px; /* Default margin */
+transition: margin-bottom 0.3s ease;
+}
+
+/* Specific layout for Channel 14 */
+.c14-active #alert-section {
+    margin-bottom: 75px; 
 }
 
 /* Class to hide the bottom gap when shower is active */
 .no-dock #alert-section {
-    margin-bottom: 0;
+    margin-bottom: 0 !important;
 }
 
 #radio-dock{
-height:100vh; /* Stretches the radio container to full screen height */
+height:100vh; /* Default stretches to full screen height */
 width:100%; 
 background:#0a111f;
 z-index: 1; /* Places it behind the alert section */
@@ -49,6 +55,12 @@ align-items:flex-end; /* Aligns the station's content to the bottom */
 padding:0; 
 margin:0;
 border-top: 1px solid rgba(255,255,255,0.05);
+transition: height 0.3s ease;
+}
+
+/* C14 specific: height is half screen */
+.c14-active #radio-dock {
+    height: 50vh;
 }
 
 .no-dock #radio-dock {
@@ -141,7 +153,6 @@ gap: 5px;
 align-items: center;
 }
 
-/* Hide specific pills in Weekday Mode */
 .weekday-mode .info-pill {
     display: none !important;
 }
@@ -168,11 +179,9 @@ cursor:pointer;
 
 #kan-container {
     width: 100%;
-    /* This defines the visible height of the station inside the background dock */
-    height: 100vh; 
+    height: 100%; 
 }
 
-/* Styling for the custom logo in the setup UI */
 .custom-logo {
     width: 120px;
     height: 120px;
@@ -188,7 +197,6 @@ cursor:pointer;
 
 <div id="setup-ui">
     <div class="mb-6 flex justify-center">
-        <!-- Replaced lightning bolt with your custom logo -->
         <img src="images/logo.png" alt="Iron Monitor Logo" class="custom-logo" onerror="this.style.display='none'">
     </div>
 
@@ -223,16 +231,12 @@ cursor:pointer;
 
 <div id="top-controls">
     <button id="exit-btn" onclick="deactivateMode()">EXIT</button>
-    
     <button id="refresh-btn" onclick="refreshMainFrame()">REFRESH PAGE</button>
-
     <button id="view-toggle" class="mode-toggle-btn" onclick="toggleWeekdayView()">NEXT VIEW</button>
-    
     <div class="info-pill" id="shabbat-end-pill">
         <span>HAVDALAH (JER):</span>
         <span id="havdalah-time">...</span>
     </div>
-
     <div class="info-pill" id="refresh-pill">
         <span id="timer-label">AUTO-REFRESH:</span>
         <span id="timer-display">03:00:00</span>
@@ -333,10 +337,16 @@ function toggleWeekdayView() {
 
 function activateMode(mode, initialView = 'tzofar'){
     currentMode = mode;
-    const selectedStation = document.getElementById('station-selector');
-    const selectedStationValue = selectedStation.value;
+    const selectedStationValue = document.getElementById('station-selector').value;
     
     document.body.classList.add('active-mode');
+
+    // Special logic for Channel 14 layout
+    if (selectedStationValue.includes("c14.co.il")) {
+        document.body.classList.add('c14-active');
+    } else {
+        document.body.classList.remove('c14-active');
+    }
     
     if(mode === 'weekday') {
         document.body.classList.add('weekday-mode');
@@ -380,10 +390,9 @@ window.onload=()=>{
     fetchShabbatTimes();
     const savedMode = localStorage.getItem('monitor_mode');
     const savedStation = localStorage.getItem('selected_station');
-    const stationSelector = document.getElementById('station-selector');
     
     if(savedStation) {
-        stationSelector.value = savedStation;
+        document.getElementById('station-selector').value = savedStation;
     }
 
     if(savedMode){
