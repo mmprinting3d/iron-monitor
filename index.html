@@ -5,31 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Iron Monitor - Guardian System</title>
 
-<!-- Site Icon (Favicon) - Points to your images folder -->
+<!-- Site Icon (Favicon) -->
 <link rel="icon" type="image/png" href="images/logo.png">
 
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-
-body{
-background:#000;
-margin:0;
-height:100vh;
-display:flex;
-flex-direction:column;
-font-family:system-ui,-apple-system,sans-serif;
-overflow: hidden;
+body {
+    background: #000;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: system-ui, -apple-system, sans-serif;
+    overflow: hidden;
 }
 
-#alert-section{
-flex:1;
-width:100%;
-position:relative;
-background:#000; /* Solid black background to hide the radio site behind it */
-z-index: 10; /* Keeps the alerts on the top layer */
-margin-bottom: 85px; /* Default margin */
-transition: margin-bottom 0.3s ease;
+#alert-section {
+    flex: 1;
+    width: 100%;
+    position: relative;
+    background: #000;
+    z-index: 10;
+    margin-bottom: 85px;
+    transition: margin-bottom 0.3s ease;
 }
 
 /* Specific layout for Channel 14 */
@@ -37,28 +36,27 @@ transition: margin-bottom 0.3s ease;
     margin-bottom: 75px; 
 }
 
-/* Class to hide the bottom gap when shower is active */
 .no-dock #alert-section {
     margin-bottom: 0 !important;
 }
 
-#radio-dock{
-height:100vh; /* Default stretches to full screen height */
-width:100%; 
-background:#0a111f;
-z-index: 1; /* Places it behind the alert section */
-position:fixed;
-bottom: 0;
-left: 0;
-display:flex;
-align-items:flex-end; /* Aligns the station's content to the bottom */
-padding:0; 
-margin:0;
-border-top: 1px solid rgba(255,255,255,0.05);
-transition: height 0.3s ease;
+#radio-dock {
+    height: 100vh;
+    width: 100%; 
+    background: #0a111f;
+    z-index: 1;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: flex-end;
+    padding: 0; 
+    margin: 0;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    transition: height 0.3s ease;
+    overflow: hidden; /* Critical for cropping C14 */
 }
 
-/* C14 specific: height is half screen */
 .c14-active #radio-dock {
     height: 50vh;
 }
@@ -67,119 +65,111 @@ transition: height 0.3s ease;
     display: none;
 }
 
-iframe{
-width:100%;
-height:100%;
-border:none;
+#kan-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
 }
 
-#setup-ui{
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-z-index:1000;
-background:#0a0a0a;
-padding:40px;
-border:2px solid #b91c1c;
-width:500px;
-text-align:center;
-box-shadow:0 0 60px rgba(185,28,28,0.4);
-border-radius:16px;
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
 }
 
-.active-mode #setup-ui{
-display:none!important;
+/* C14 Cropping Logic: Hide the red header and sidebars */
+.c14-active #kan-frame {
+    width: 106%; /* Stretch slightly to hide sidebars */
+    height: 120%; /* Height increased to allow pushing header up */
+    position: absolute;
+    top: -65px; /* Push the red C14 navigation bar up out of view */
+    left: -3%; /* Center the stretched frame */
 }
 
-#top-controls{
-display:none;
-position:fixed;
-top:10px;
-left:10px;
-z-index:1001;
-align-items:center;
-gap:10px;
+#setup-ui {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    background: #0a0a0a;
+    padding: 40px;
+    border: 2px solid #b91c1c;
+    width: 500px;
+    text-align: center;
+    box-shadow: 0 0 60px rgba(185, 28, 28, 0.4);
+    border-radius: 16px;
 }
 
-.active-mode #top-controls{
-display:flex;
-}
-
-#exit-btn, .mode-toggle-btn, #refresh-btn{
-background:rgba(255,255,255,0.05);
-color:#888;
-border:1px solid #333;
-font-size:10px;
-padding:4px 10px;
-cursor:pointer;
-border-radius:4px;
-font-weight:bold;
-transition:all .2s;
-}
-
-#exit-btn:hover, .mode-toggle-btn:hover, #refresh-btn:hover{
-background:rgba(255,255,255,0.1);
-color:#fff;
-}
-
-#refresh-btn {
-    border-color: #10b981;
-    color: #10b981;
-}
-
-.mode-toggle-btn {
-    display: none;
-    border-color: #3b82f6;
-    color: #3b82f6;
-}
-
-.weekday-mode .mode-toggle-btn {
-    display: block;
-}
-
-.info-pill{
-color:#ef4444;
-font-family:monospace;
-font-size:11px;
-font-weight:bold;
-background:rgba(0,0,0,.7);
-padding:4px 10px;
-border-radius:4px;
-border:1px solid rgba(185,28,28,.3);
-white-space:nowrap;
-display: flex;
-gap: 5px;
-align-items: center;
-}
-
-.weekday-mode .info-pill {
+.active-mode #setup-ui {
     display: none !important;
 }
 
-#label-station{
-color:#fff;
-margin-bottom:12px; 
+#top-controls {
+    display: none;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1001;
+    align-items: center;
+    gap: 10px;
 }
 
-select{
-background:#1a1a1a!important;
-color:#fff!important;
-border:1px solid #333;
-padding:14px;
-border-radius:8px;
-width:100%;
-margin-bottom:30px; 
-margin-top: 5px; 
-font-size:16px;
-font-weight:600;
-appearance:none;
-cursor:pointer;
+.active-mode #top-controls {
+    display: flex;
 }
 
-#kan-container {
+#exit-btn, .mode-toggle-btn, #refresh-btn {
+    background: rgba(255, 255, 255, 0.05);
+    color: #888;
+    border: 1px solid #333;
+    font-size: 10px;
+    padding: 4px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: all .2s;
+}
+
+#exit-btn:hover, .mode-toggle-btn:hover, #refresh-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+#refresh-btn { border-color: #10b981; color: #10b981; }
+.mode-toggle-btn { display: none; border-color: #3b82f6; color: #3b82f6; }
+.weekday-mode .mode-toggle-btn { display: block; }
+
+.info-pill {
+    color: #ef4444;
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: bold;
+    background: rgba(0, 0, 0, .7);
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid rgba(185, 28, 28, .3);
+    white-space: nowrap;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.weekday-mode .info-pill { display: none !important; }
+
+select {
+    background: #1a1a1a !important;
+    color: #fff !important;
+    border: 1px solid #333;
+    padding: 14px;
+    border-radius: 8px;
     width: 100%;
-    height: 100%; 
+    margin-bottom: 30px; 
+    margin-top: 5px; 
+    font-size: 16px;
+    font-weight: 600;
+    appearance: none;
+    cursor: pointer;
 }
 
 .custom-logo {
@@ -189,7 +179,6 @@ cursor:pointer;
     margin: 0 auto;
     filter: drop-shadow(0 0 10px rgba(185, 28, 28, 0.3));
 }
-
 </style>
 </head>
 
@@ -197,33 +186,31 @@ cursor:pointer;
 
 <div id="setup-ui">
     <div class="mb-6 flex justify-center">
-        <img src="images/logo.png" alt="Iron Monitor Logo" class="custom-logo" onerror="this.style.display='none'">
+        <img src="images/logo.png" alt="Logo" class="custom-logo" onerror="this.style.display='none'">
     </div>
 
     <h1 class="text-4xl font-black text-red-600 mb-2 uppercase italic tracking-tighter">Iron Monitor</h1>
     
-    <div class="text-left text-xs font-bold uppercase tracking-wider mt-8" id="label-station">Select Radio Station:</div>
+    <div class="text-left text-xs font-bold uppercase tracking-wider mt-8 text-white">Select Radio Station:</div>
 
     <select id="station-selector">
-        <option value="https://www.c14.co.il/radio" selected>רדיו עכשיו 14</option>
-        <option value="https://fm1.co.il/kan-moreshet">כאן מורשת (Silent)</option>
+        <option value="https://fm1.co.il/kan-moreshet" selected>כאן מורשת (Silent)</option>
         <option value="https://fm1.co.il/93fm">רדיו קול חי</option>
         <option value="https://fm1.co.il/kol-barama">רדיו קול ברמה</option>
+        <option value="https://www.c14.co.il/radio">רדיו עכשיו 14</option>
     </select>
 
     <div class="flex flex-col gap-3">
         <button onclick="activateMode('shabbat')" 
-        class="w-full bg-red-700 hover:bg-red-600 py-4 rounded-xl font-black text-white uppercase tracking-widest transition-all shadow-xl shadow-red-900/40 transform hover:scale-[1.02] active:scale-95">
+        class="w-full bg-red-700 hover:bg-red-600 py-4 rounded-xl font-black text-white uppercase tracking-widest transition-all shadow-xl">
             Activate Shabbat Mode
         </button>
-
         <button onclick="activateMode('weekday')" 
-        class="w-full bg-blue-700 hover:bg-blue-600 py-4 rounded-xl font-black text-white uppercase tracking-widest transition-all shadow-xl shadow-blue-900/40 transform hover:scale-[1.02] active:scale-95">
+        class="w-full bg-blue-700 hover:bg-blue-600 py-4 rounded-xl font-black text-white uppercase tracking-widest transition-all shadow-xl">
             Open Weekday Dashboard
         </button>
-
         <button onclick="activateMode('weekday', 'shower')" 
-        class="w-full bg-cyan-700 hover:bg-cyan-600 py-4 rounded-xl font-black text-white uppercase tracking-widest transition-all shadow-xl shadow-cyan-900/40 transform hover:scale-[1.02] active:scale-95">
+        class="w-full bg-cyan-700 hover:bg-cyan-600 py-4 rounded-xl font-black text-white uppercase tracking-widest transition-all shadow-xl">
             Check Shower Status
         </button>
     </div>
@@ -254,14 +241,15 @@ cursor:pointer;
 </div>
 
 <script>
-
 let currentMode = null;
 let currentWeekdayView = 'tzofar'; 
-const ALERT_URL="https://www.tzevaadom.co.il/"
-const NEWS_URL="https://www.c14.co.il/news-flash"
-const SHOWER_URL="https://canishower.com/"
-const REFRESH_INTERVAL=3*60*60*1000
-let refreshTime=Date.now()+REFRESH_INTERVAL
+let wakeLock = null;
+
+const ALERT_URL = "https://www.tzevaadom.co.il/";
+const NEWS_FLASH_URL = "https://www.c14.co.il/news-flash";
+const SHOWER_URL = "https://canishower.com/";
+const REFRESH_INTERVAL = 3 * 60 * 60 * 1000;
+let refreshTime = Date.now() + REFRESH_INTERVAL;
 
 async function fetchShabbatTimes() {
     try {
@@ -275,34 +263,39 @@ async function fetchShabbatTimes() {
     } catch (e) { document.getElementById('havdalah-time').innerText = "ERR"; }
 }
 
-function updateUI(){
-    if(!currentMode || currentMode === 'weekday') return;
-
-    if(currentMode === 'shabbat'){
+function updateUI() {
+    if (!currentMode || currentMode === 'weekday') return;
+    if (currentMode === 'shabbat') {
         const diff = refreshTime - Date.now();
-        if(diff <= 0) { location.reload(); return; }
+        if (diff <= 0) { 
+            const station = document.getElementById('station-selector').value;
+            if (station.includes("c14.co.il")) {
+                refreshMainFrame();
+                refreshTime = Date.now() + REFRESH_INTERVAL;
+                localStorage.setItem('refresh_target', refreshTime);
+            } else {
+                location.reload(); 
+            }
+            return; 
+        }
         const h = Math.floor(diff/3600000).toString().padStart(2,'0');
         const m = Math.floor((diff%3600000)/60000).toString().padStart(2,'0');
         const s = Math.floor((diff%60000)/1000).toString().padStart(2,'0');
         document.getElementById('timer-display').innerText = `${h}:${m}:${s}`;
     }
 }
-
 setInterval(updateUI, 1000);
 
 function refreshMainFrame() {
     const frame = document.getElementById('alert-frame');
-    const currentSrc = frame.src;
+    const src = frame.src;
     frame.src = 'about:blank';
-    setTimeout(() => {
-        frame.src = currentSrc;
-    }, 100);
+    setTimeout(() => { frame.src = src; }, 100);
 }
 
 function updateWeekdayControlsVisibility() {
     const refreshBtn = document.getElementById('refresh-btn');
     const toggleBtn = document.getElementById('view-toggle');
-    
     if (currentMode === 'weekday' && currentWeekdayView === 'shower') {
         refreshBtn.style.display = 'none';
         toggleBtn.style.display = 'none';
@@ -319,9 +312,8 @@ function updateWeekdayControlsVisibility() {
 function toggleWeekdayView() {
     const frame = document.getElementById('alert-frame');
     const btn = document.getElementById('view-toggle');
-    
     if (currentWeekdayView === 'tzofar') {
-        frame.src = NEWS_URL;
+        frame.src = NEWS_FLASH_URL;
         currentWeekdayView = 'news';
         btn.innerText = "SWITCH TO SHOWER STATUS";
     } else if (currentWeekdayView === 'news') {
@@ -335,80 +327,66 @@ function toggleWeekdayView() {
     updateWeekdayControlsVisibility();
 }
 
-function activateMode(mode, initialView = 'tzofar'){
+async function requestWakeLock() {
+    try {
+        if ('wakeLock' in navigator) {
+            wakeLock = await navigator.wakeLock.request('screen');
+        }
+    } catch (err) {}
+}
+
+function activateMode(mode, initialView = 'tzofar') {
     currentMode = mode;
-    const selectedStationValue = document.getElementById('station-selector').value;
-    
+    const station = document.getElementById('station-selector').value;
     document.body.classList.add('active-mode');
 
-    // Special logic for Channel 14 layout
-    if (selectedStationValue.includes("c14.co.il")) {
+    if (station.includes("c14.co.il")) {
         document.body.classList.add('c14-active');
     } else {
         document.body.classList.remove('c14-active');
     }
     
-    if(mode === 'weekday') {
+    if (mode === 'weekday') {
         document.body.classList.add('weekday-mode');
         currentWeekdayView = initialView;
-        
         const frame = document.getElementById('alert-frame');
-        const btn = document.getElementById('view-toggle');
-
-        if(initialView === 'shower') {
-            frame.src = SHOWER_URL;
-        } else if (initialView === 'news') {
-            frame.src = NEWS_URL;
-            btn.innerText = "SWITCH TO SHOWER STATUS";
-        } else {
-            frame.src = ALERT_URL;
-            btn.innerText = "SWITCH TO NEWS FLASHES";
-        }
+        if (initialView === 'shower') frame.src = SHOWER_URL;
+        else if (initialView === 'news') frame.src = NEWS_FLASH_URL;
+        else frame.src = ALERT_URL;
     } else {
         document.body.classList.remove('weekday-mode');
         refreshTime = Date.now() + REFRESH_INTERVAL;
         localStorage.setItem('refresh_target', refreshTime);
         document.getElementById('alert-frame').src = ALERT_URL;
+        requestWakeLock();
     }
 
     updateWeekdayControlsVisibility();
-    document.getElementById('kan-frame').src = selectedStationValue;
-    
+    document.getElementById('kan-frame').src = station;
     localStorage.setItem('monitor_mode', mode);
-    localStorage.setItem('selected_station', selectedStationValue);
-    
-    if('wakeLock' in navigator) navigator.wakeLock.request('screen').catch(()=>{});
+    localStorage.setItem('selected_station', station);
 }
 
-function deactivateMode(){
+function deactivateMode() {
+    if (wakeLock) { wakeLock.release(); wakeLock = null; }
     localStorage.removeItem('monitor_mode');
     localStorage.removeItem('refresh_target');
     location.reload();
 }
 
-window.onload=()=>{
+window.onload = () => {
     fetchShabbatTimes();
     const savedMode = localStorage.getItem('monitor_mode');
     const savedStation = localStorage.getItem('selected_station');
-    
-    if(savedStation) {
-        document.getElementById('station-selector').value = savedStation;
-    }
-
-    if(savedMode){
-        if(savedMode === 'shabbat'){
-            const savedTarget = localStorage.getItem('refresh_target');
-            if(savedTarget) refreshTime = parseInt(savedTarget);
-        }
-        activateMode(savedMode);
-    }
+    if (savedStation) document.getElementById('station-selector').value = savedStation;
+    if (savedMode) activateMode(savedMode);
 }
 
-window.oncontextmenu=(e)=>{
-    if(currentMode === 'shabbat') e.preventDefault();
-}
+document.addEventListener('visibilitychange', () => {
+    if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock();
+});
 
+window.oncontextmenu = (e) => { if (currentMode === 'shabbat') e.preventDefault(); }
 </script>
-
 </body>
 </html>
